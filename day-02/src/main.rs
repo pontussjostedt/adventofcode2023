@@ -1,6 +1,6 @@
-const NUM_RED: i32 = 12;
-const NUM_GREEN: i32 = 13;
-const NUM_BLUE: i32 = 14;
+const NUM_RED: u32 = 12;
+const NUM_GREEN: u32 = 13;
+const NUM_BLUE: u32 = 14;
 
 const RED: &str = "red";
 const GREEN: &str = "green";
@@ -34,7 +34,6 @@ fn parse_round(input: &str) -> Round {
 
     for ball in balls {
         let ball_vec = ball.trim().split(' ').collect::<Vec<_>>();
-        println!("{:?}", ball_vec);
         let color = ball_vec[1];
         let num = ball_vec[0];
         match color {
@@ -66,9 +65,27 @@ fn parse_game(input: &str) -> Game {
     Game { id, rounds }
 }
 
+fn valid_round(round: &Round) -> bool {
+    round.red <= NUM_RED && round.green <= NUM_GREEN && round.blue <= NUM_BLUE
+}
+
 fn main() {
     let input = include_str!("../input1.txt");
-    println!("Hello, world!");
+    let answer: i32 = input
+        .lines()
+        .map(|input|{
+            let game = parse_game(input);
+            if game.rounds.iter().all(valid_round) {
+                game.id
+            } else {
+                0
+            }
+        })
+        .sum();
+    println!("The answer to part 1 = {}", answer)
+    
+    
+    
 }
 
 #[cfg(test)]
