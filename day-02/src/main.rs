@@ -1,3 +1,4 @@
+use std::cmp::max;
 const NUM_RED: u32 = 12;
 const NUM_GREEN: u32 = 13;
 const NUM_BLUE: u32 = 14;
@@ -5,12 +6,6 @@ const NUM_BLUE: u32 = 14;
 const RED: &str = "red";
 const GREEN: &str = "green";
 const BLUE: &str = "blue";
-
-enum Orbs {
-    Red(i32),
-    Green(i32),
-    Blue(i32),
-}
 
 #[derive(Debug, PartialEq)]
 struct Round {
@@ -69,6 +64,13 @@ fn valid_round(round: &Round) -> bool {
     round.red <= NUM_RED && round.green <= NUM_GREEN && round.blue <= NUM_BLUE
 }
 
+fn get_game_power(game: &Game) -> u32 {
+    let (red, green, blue) = game.rounds.iter().fold((0, 0, 0), |(red_acc, green_acc, blue_acc), round| {
+        (max(red_acc, round.red), max(green_acc, round.green), max(blue_acc, round.blue))
+    });
+    red * green * blue
+}
+
 fn main() {
     let input = include_str!("../input1.txt");
     let answer: i32 = input
@@ -82,7 +84,15 @@ fn main() {
             }
         })
         .sum();
-    println!("The answer to part 1 = {}", answer)
+    println!("The answer to part 1 = {}", answer);
+    let answer2: i32 = input
+        .lines()
+        .map(|input| {
+            let game = parse_game(input);
+            get_game_power(&game) as i32
+        })
+        .sum();
+    println!("The answer to part 2 = {}", answer2)
     
     
     
